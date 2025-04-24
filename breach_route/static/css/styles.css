@@ -1,0 +1,46 @@
+@layer utilities {
+    .text-orange-700 {
+        color: var(--color-orange-700);
+    }
+    .border-orange-700 {
+        border-color: var(--color-orange-700);
+    }
+    .hover\:bg-orange-800 {
+        &:hover {
+            @media (hover: hover) {
+                background-color: var(--color-orange-800);
+            }
+        }
+    }
+    .focus\:ring-orange-300 {
+        &:focus {
+            --tw-ring-color: var(--color-orange-300);
+        }
+    }
+    .dark\:border-orange-500 {
+        @media (prefers-color-scheme: dark) {
+            border-color: var(--color-orange-500);
+        }
+    }
+    .dark\:text-orange-500 {
+        @media (prefers-color-scheme: dark) {
+            color: var(--color-orange-500);
+        }
+    }
+    .dark\:hover\:bg-orange-600 {
+    @media (prefers-color-scheme: dark) {
+        &:hover {
+        @media (hover: hover) {
+            background-color: var(--color-orange-600);
+        }
+        }
+    }
+    }
+    .dark\:focus\:ring-orange-900 {
+        @media (prefers-color-scheme: dark) {
+        &:focus {
+            --tw-ring-color: var(--color-orange-900);
+        }
+        }
+    }
+}

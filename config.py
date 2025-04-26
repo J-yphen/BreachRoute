@@ -5,6 +5,8 @@ load_dotenv()
 
 class Config:
     SECRET_KEY = os.getenv('FLASK_SECRET_KEY', 'dev-fallback-key')
+    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', 'sqlite:///app.db')
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 class ProductionConfig(Config):
     DEBUG = False

@@ -14,3 +14,5 @@ links
 .env
 *.pyc
 *.db
+instance/
+migrations/

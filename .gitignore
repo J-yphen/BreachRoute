@@ -8,6 +8,9 @@ dist/
 htmlcov/
 .tox/
 docs/_build/
-breach_route/node_modules
-breach_route/static/src
+app/breach_route/node_modules
+app/static/src
 links
+.env
+*.pyc
+*.db

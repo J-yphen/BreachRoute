@@ -1,9 +1,8 @@
 import re
-from flask import Blueprint, render_template, redirect, url_for, request
-from werkzeug.security import generate_password_hash
-from ..models import AppConfig
-from ..models import User
 from .. import db
+from ..models import AppConfig, User
+from werkzeug.security import generate_password_hash
+from flask import Blueprint, flash, render_template, redirect, url_for, request
 
 bp = Blueprint('onboarding', __name__,
               template_folder='templates')
@@ -22,6 +21,7 @@ def setup():
         
         user = User.query.filter_by(username=username).first()
         if user or not bool(re.fullmatch(r'[A-Za-z0-9_-]+', url_path)) or url_path == "admin":
+            flash('Username or path already exists')
             return render_template('onboarding/setup.html')
         
         new_user = User(username=username, url_path=url_path, password=generate_password_hash(password))

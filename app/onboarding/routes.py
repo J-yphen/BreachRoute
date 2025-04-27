@@ -12,23 +12,23 @@ def setup():
     config = AppConfig.query.first()
     
     if config.setup_complete:
-        return redirect(url_for('main.admin'))
+        return redirect(url_for('main.login'))
 
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
-        url_path = request.form.get('url_path')
+        # url_path = request.form.get('url_path')
         
         user = User.query.filter_by(username=username).first()
-        if user or not bool(re.fullmatch(r'[A-Za-z0-9_-]+', url_path)) or url_path == "admin":
+        if user:
             flash('Username or path already exists')
             return render_template('onboarding/setup.html')
         
-        new_user = User(username=username, url_path=url_path, password=generate_password_hash(password))
+        new_user = User(username=username, password=generate_password_hash(password))
 
         db.session.add(new_user)
         config.setup_complete = True
         db.session.commit()
-        return redirect(url_for('main.admin'))
+        return redirect(url_for('main.login'))
 
     return render_template('onboarding/setup.html')

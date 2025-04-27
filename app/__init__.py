@@ -1,6 +1,6 @@
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 migrate = Migrate()
@@ -38,7 +38,6 @@ def create_app(config_class='config.Config'):
         # app.add_url_rule('/', endpoint='onboarding.setup') ### Adding this will redirect to `/setup` by default
 
     from flask import render_template
-
     @app.errorhandler(404)
     def page_not_found(e):
         return render_template('404.html'), 404

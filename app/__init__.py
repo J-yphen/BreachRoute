@@ -37,6 +37,12 @@ def create_app(config_class='config.Config'):
         app.register_blueprint(onboarding_bp)
         # app.add_url_rule('/', endpoint='onboarding.setup') ### Adding this will redirect to `/setup` by default
 
+    from flask import render_template
+
+    @app.errorhandler(404)
+    def page_not_found(e):
+        return render_template('404.html'), 404
+    
     return app
 
 app = create_app()

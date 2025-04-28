@@ -1,6 +1,6 @@
 from ..models import AppConfig, User
 from werkzeug.utils import secure_filename
-from app.utils.route_utils import fetch_all_route, fetch_route_payload, register_route, render_route
+from app.utils.route_utils import fetch_all_route, fetch_route_payload, modify_route, register_route, render_route
 from werkzeug.security import check_password_hash
 from flask_login import current_user, login_required, login_user, logout_user
 from flask import Blueprint, flash, jsonify, redirect, render_template, request, url_for
@@ -75,7 +75,28 @@ def add_route():
 @bp.route('/update_route', methods=['POST'])
 @login_required
 def update_route():
-    return "Test"
+    url_path = request.form.get('url_path')
+    filename = secure_filename(request.form.get('filename'))
+    payload = request.form.get('payload')
+    old_url_path_id = request.form.get('update-path')
+
+    if not filename:
+        flash("Filename is required")
+        return redirect(url_for('main.admin'))
+    
+    if request.files.get('file-payload').filename != "":
+        payload_file = request.files['file-payload']
+        res = modify_route(old_url_path_id=old_url_path_id, new_url_path=url_path, new_filename=filename, payload=payload_file, isFile=True)
+        flash(res)
+        return redirect(url_for('main.admin'))
+
+    elif payload:
+        res = modify_route(old_url_path_id=old_url_path_id, new_url_path=url_path, new_filename=filename, payload=payload, isFile=False)
+        flash(res)
+        return redirect(url_for('main.admin'))
+    else:
+        flash("Payload is required")
+        return redirect(url_for('main.admin'))
 
 @bp.route('/<path:dynamic_path>')
 @login_required

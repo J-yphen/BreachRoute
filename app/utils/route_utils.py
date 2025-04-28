@@ -5,6 +5,8 @@ from jinja2 import Environment, FileSystemLoader
 from flask import abort, current_app, send_from_directory
 
 template_extensions = ['.html', '.jinja', '.j2', '.xml', '.txt', '.css', '.js']
+is_valid = lambda filename: re.match(r'^(?!^(CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])(\..*)?$)(?!.*[\\/:*?"<>|])[^\\/:*?"<>|\r\n]{1,255}(?<![ .])$', filename, re.IGNORECASE) is not None
+
 
 def register_route(url_path, filename, payload, isFile):
     uploads_dir = current_app.config['UPLOAD_FOLDER']
@@ -19,10 +21,13 @@ def register_route(url_path, filename, payload, isFile):
         # return jsonify({"error": "Route already exists"}), 400
         return "Route already exists"
     
+    if is_valid(filename):
+        return "Filename is not valid"
+    
     if os.path.exists(file_path) or Route.query.filter_by(filename=filename).first():
-            # return jsonify({"error": "Filename already exists"}), 400
-            return "Filename already exists"
-
+        # return jsonify({"error": "Filename already exists"}), 400
+        return "Filename already exists"
+    
     if isFile:
         payload.save(file_path)
     else:
@@ -66,6 +71,42 @@ def fetch_route_payload(url_path):
     with open(file_path, 'r') as file:
         return file.read()
 
+def modify_route(old_url_path_id, new_url_path, new_filename, payload, isFile):
+    uploads_dir = current_app.config['UPLOAD_FOLDER']
+    file_path = os.path.join(uploads_dir, new_filename)
+    new_url_path = new_url_path.lstrip('/')
+    old_url_path_id = old_url_path_id.lstrip('/')
+
+    old_route = Route.query.filter_by(url_path=old_url_path_id).first()
+
+    if old_url_path_id != new_url_path:
+        if Route.query.filter_by(url_path=new_url_path).first() == None or not bool(re.fullmatch(r'[A-Za-z0-9_-]+', new_url_path)):
+            old_route.url_path = new_url_path
+            if old_route.filename != new_filename:
+                if Route.query.filter_by(filename=new_filename) == None and is_valid(new_filename):
+                    old_route.filename = new_filename
+                else:
+                    return "Filename is not valid"
+        else:
+            return "URL Path is not valid"
+    else:
+        if old_route.filename != new_filename:
+            if Route.query.filter_by(filename=new_filename) == None and is_valid(new_filename):
+                old_route.filename = new_filename
+            else:
+                return "Filename is not valid"
+    
+    if isFile:
+        payload.save(file_path)
+    else:
+        with open(file_path, 'w+') as file:
+            file.write(payload)
+    try:
+        db.session.commit()
+        return "Route updated successfully"
+    except Exception as e:
+        db.session.rollback()
+        return str(e)
 
 # uploads_dir = current_app.config['UPLOAD_FOLDER']
 #     for route in routes:

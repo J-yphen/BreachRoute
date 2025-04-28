@@ -36,9 +36,13 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log('Edit button clicked for row id:', tr.id);
             let filenameInput = document.getElementById('edit_filename');
             let urlPathInput = document.getElementById('edit_url_path');
+            let preserver_url_path = document.getElementById('update-path');
             if (filenameInput && urlPathInput) {
                 filenameInput.value = tr.getAttribute('data-route-filename');
                 urlPathInput.value = tr.id;
+            }
+            if (preserver_url_path){
+                preserver_url_path.value = tr.id;
             }
             let payloadInput = document.getElementById('update-payload');
             if (payloadInput){

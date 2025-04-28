@@ -1,7 +1,9 @@
-from flask_login import current_user, login_required, login_user, logout_user
 from ..models import AppConfig, User
+from werkzeug.utils import secure_filename
+from app.utils.route_utils import register_route
 from werkzeug.security import check_password_hash
-from flask import Blueprint, flash, redirect, render_template, request, url_for
+from flask_login import current_user, login_required, login_user, logout_user
+from flask import Blueprint, flash, jsonify, redirect, render_template, request, url_for
 
 bp = Blueprint('main', __name__, template_folder='templates')
 
@@ -17,6 +19,11 @@ def admin():
 
 @bp.route('/login', methods=["GET", "POST"])
 def login_handler():
+    config = AppConfig.query.first()
+
+    if not config.setup_complete:
+        return redirect(url_for('onboarding.setup'))
+    
     if request.method == "GET":
         return render_template('breach/login.html')
     else:
@@ -37,3 +44,21 @@ def login_handler():
 def logout():
     logout_user()
     return redirect(url_for('main.login_handler'))
+
+@bp.route('/add_route', methods=['POST'])
+@login_required
+def add_route():
+    url_path = request.form.get('url_path')
+    filename = secure_filename(request.form.get('filename'))
+    payload = request.form.get('payload')
+
+    if not filename:
+        return jsonify({"error": "Filename is required"}), 400
+        
+    if 'drop-payload' in request.files:
+        payload_file = request.files['drop-payload']
+        return register_route(url_path=url_path, filename=filename, payload=payload_file, isFile=True)
+    elif payload:
+        return register_route(url_path=url_path, filename=filename, payload=payload, isFile=False)
+    else:
+        return jsonify({"error": "Payload is required"}), 400

@@ -16,3 +16,6 @@ links
 *.db
 instance/
 migrations/
+uploads/
+backend_bp/
+proxy_bp/

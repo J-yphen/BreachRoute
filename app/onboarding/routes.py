@@ -1,4 +1,3 @@
-import re
 from .. import db
 from ..models import AppConfig, User
 from werkzeug.security import generate_password_hash
@@ -29,6 +28,6 @@ def setup():
         db.session.add(new_user)
         config.setup_complete = True
         db.session.commit()
-        return redirect(url_for('main.login'))
+        return redirect(url_for('main.login_handler'))
 
     return render_template('onboarding/setup.html')

@@ -1,3 +1,4 @@
+import os
 from flask import Flask
 from flask_migrate import Migrate
 from flask_login import LoginManager
@@ -29,6 +30,7 @@ def create_app(config_class='config.Config'):
             db.session.commit()
         
         app.config['SETUP_COMPLETE'] = config.setup_complete
+        os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
     
     from .breach_route import bp as main_bp
     from .onboarding import bp as onboarding_bp

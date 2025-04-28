@@ -1,9 +1,9 @@
 from ..models import AppConfig, User
 from werkzeug.utils import secure_filename
-from app.utils.route_utils import fetch_all_route, register_route, render_route
+from app.utils.route_utils import fetch_all_route, fetch_route_payload, register_route, render_route
 from werkzeug.security import check_password_hash
 from flask_login import current_user, login_required, login_user, logout_user
-from flask import Blueprint, flash, redirect, render_template, request, url_for
+from flask import Blueprint, flash, jsonify, redirect, render_template, request, url_for
 
 bp = Blueprint('main', __name__, template_folder='templates')
 
@@ -78,5 +78,11 @@ def update_route():
     return "Test"
 
 @bp.route('/<path:dynamic_path>')
+@login_required
 def dynamic_handler(dynamic_path):
     return render_route(dynamic_path)
+
+@bp.route('/fetch_payload/<path:url_path>')
+@login_required
+def fetch_payload(url_path):
+    return jsonify({"payload": fetch_route_payload(url_path)})

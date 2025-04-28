@@ -17,3 +17,4 @@ class Route(db.Model):
     path_visible = db.Column(db.Boolean, default=True, nullable=False)
     filename = db.Column(db.Text, unique=True, nullable=False)
     response_type = db.Column(Enum('template', 'file', name='response_type_enum'), nullable=False)
+    payload = None

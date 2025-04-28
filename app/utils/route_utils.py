@@ -58,3 +58,17 @@ def render_route(dynamic_path):
 def fetch_all_route():
     routes = Route.query.all()
     return routes
+
+def fetch_route_payload(url_path):
+    route = Route.query.filter_by(url_path=url_path).first()
+    uploads_dir = current_app.config['UPLOAD_FOLDER']
+    file_path = os.path.join(uploads_dir, route.filename)
+    with open(file_path, 'r') as file:
+        return file.read()
+
+
+# uploads_dir = current_app.config['UPLOAD_FOLDER']
+#     for route in routes:
+#         file_path = os.path.join(uploads_dir, route.filename)
+#         with open(file_path, 'r') as file:
+#             route.payload = file.read()

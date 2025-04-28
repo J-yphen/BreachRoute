@@ -25,3 +25,35 @@ dropArea.addEventListener('change', function (e) {
 function resetForm() {
     document.getElementById('create-link-form').reset();
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelector('table').addEventListener('click', (event) => {
+      let button = event.target.closest('button');
+      if (!button) return;
+      if (button.textContent.trim() === 'Edit') {
+        let tr = button.closest('tr');
+        if (tr) {
+            console.log('Edit button clicked for row id:', tr.id);
+            let filenameInput = document.getElementById('edit_filename');
+            let urlPathInput = document.getElementById('edit_url_path');
+            if (filenameInput && urlPathInput) {
+                filenameInput.value = tr.getAttribute('data-route-filename');
+                urlPathInput.value = tr.id;
+            }
+            let payloadInput = document.getElementById('update-payload');
+            if (payloadInput){
+                fetch('fetch_payload/'+ tr.id)
+                .then((response) => {
+                  return response.json();
+                })
+                .then((data) => {
+                    payloadInput.value = data.payload;
+                })
+                .catch(function(error) {
+                  console.log(error);
+                });
+            }
+        }
+      }
+    });
+});

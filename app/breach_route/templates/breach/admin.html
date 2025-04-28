@@ -150,7 +150,7 @@
                     </thead>
                     <tbody>
                         {% for route in route_list %}
-                        <tr class="border-b dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600">
+                        <tr class="border-b dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600" id="{{ route.url_path }}" data-route-filename="{{ route.filename }}">
                             <td class="p-4 w-4">
                                 <div class="flex items-center">
                                     <input id="checkbox-table-search-1" type="checkbox" onclick="event.stopPropagation()" class="w-4 h-4 text-primary-600 bg-gray-100 rounded border-gray-300 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
@@ -218,9 +218,7 @@
     <!-- Add product component -->
     <div id="create-new-link" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-modal md:h-full">
         <div class="relative p-4 w-full max-w-3xl h-full max-h-screen">
-            <!-- Modal content -->
             <div class="relative p-4 bg-white rounded-lg shadow dark:bg-gray-800 sm:p-5">
-                <!-- Modal header -->
                 <div class="flex justify-between items-center pb-4 mb-4 rounded-t border-b sm:mb-5 dark:border-gray-600">
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Create Link</h3>
                     <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="create-new-link">
@@ -230,16 +228,15 @@
                         <span class="sr-only">Close modal</span>
                     </button>
                 </div>
-                <!-- Modal body -->
                 <form id="create-link-form" action="{{ url_for('main.add_route') }}" method="post" enctype="multipart/form-data">
                     <div class="grid gap-4 mb-4 sm:grid-cols-2">
                         <div>
-                            <label for="url_path" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">URL Path</label>
-                            <input type="text" name="url_path" id="url_path" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="/path/to/serve/" required="">
+                            <label for="create_url_path" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">URL Path</label>
+                            <input type="text" name="url_path" id="create_url_path" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="/path/to/serve/" required="">
                         </div>
                         <div>
-                            <label for="filename" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Filename</label>
-                            <input type="text" name="filename" id="filename" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="File name" required="">
+                            <label for="create_filename" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Filename</label>
+                            <input type="text" name="filename" id="create_filename" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="File name" required="">
                         </div>
                         <div class="sm:col-span-2">
                             <label for="new-payload" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Payload</label>
@@ -302,9 +299,7 @@
     <!-- drawer component -->
     <div id="drawer-update-link" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-modal md:h-full" aria-labelledby="drawer-update-link-label">
         <div class="relative p-4 w-full max-w-3xl h-full max-h-screen">
-            <!-- Modal content -->
             <div class="relative p-4 bg-white rounded-lg shadow dark:bg-gray-800 sm:p-5">
-                <!-- Modal header -->
                 <div class="flex justify-between items-center pb-4 mb-4 rounded-t border-b sm:mb-5 dark:border-gray-600">
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Edit Link</h3>
                     <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="drawer-update-link">
@@ -314,19 +309,18 @@
                         <span class="sr-only">Close modal</span>
                     </button>
                 </div>
-                <!-- Modal body -->
                 <form id="update-link-form" action="{{ url_for('main.update_route') }}" method="post" enctype="multipart/form-data">
                     <div class="grid gap-4 mb-4 sm:grid-cols-2">
                         <div>
-                            <label for="url_path" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Link Path</label>
-                            <input type="text" name="url_path" id="url_path" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="/path/to/serve/" required="">
+                            <label for="edit_url_path" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Link Path</label>
+                            <input type="text" name="url_path" id="edit_url_path" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="/path/to/serve/" required="">
                         </div>
                         <div>
-                            <label for="filename" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Filename</label>
-                            <input type="text" name="filename" id="filename" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="File name" required="">
+                            <label for="edit_filename" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Filename</label>
+                            <input type="text" name="filename" id="edit_filename" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="File name" required="">
                         </div>
                         <div class="sm:col-span-2">
-                            <label for="payload" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Payload</label>
+                            <label for="update-payload" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Payload</label>
                             <div class="w-full border border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600">
                                 <div class="flex items-center justify-between px-3 py-2 border-b dark:border-gray-600">
                                     <div class="flex flex-wrap items-center divide-gray-200 sm:divide-x dark:divide-gray-600">

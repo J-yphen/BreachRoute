@@ -53,15 +53,25 @@ def add_route():
     payload = request.form.get('payload')
 
     if not filename:
-        return jsonify({"error": "Filename is required"}), 400
-        
-    if 'drop-payload' in request.files:
-        payload_file = request.files['drop-payload']
-        return register_route(url_path=url_path, filename=filename, payload=payload_file, isFile=True)
+        flash("Filename is required")
+        # return jsonify({"error": "Filename is required"}), 400
+        return redirect(url_for('main.admin'))
+    
+    if request.files.get('file-payload').filename != "":
+        payload_file = request.files['file-payload']
+        res = register_route(url_path=url_path, filename=filename, payload=payload_file, isFile=True)
+        flash(res)
+        return redirect(url_for('main.admin'))
+
     elif payload:
-        return register_route(url_path=url_path, filename=filename, payload=payload, isFile=False)
+        res = register_route(url_path=url_path, filename=filename, payload=payload, isFile=False)
+        flash(res)
+        return redirect(url_for('main.admin'))
     else:
-        return jsonify({"error": "Payload is required"}), 400
+        flash("Payload is required")
+        # return jsonify({"error": "Payload is required"}), 400
+        return redirect(url_for('main.admin'))
+    
 
 @bp.route('/<path:dynamic_path>')
 def dynamic_handler(dynamic_path):

@@ -1,7 +1,9 @@
 import os
 import re
+
+from jinja2 import Environment, FileSystemLoader
 from app.models import Route, db
-from flask import current_app, jsonify
+from flask import abort, current_app, jsonify, send_from_directory
 
 template_extensions = ['.html', '.jinja', '.j2', '.xml', '.txt', '.css', '.js']
 
@@ -27,7 +29,7 @@ def register_route(url_path, filename, payload, isFile):
     else:
         response_type = "file"
     
-    new_route = Route(url_path=url_path, path_visible=True, filename=filename, response_type=response_type)
+    new_route = Route(url_path=url_path.lstrip('/'), path_visible=True, filename=filename, response_type=response_type)
     db.session.add(new_route)
     db.session.commit()
 
@@ -38,3 +40,16 @@ def register_route(url_path, filename, payload, isFile):
     #     from flask_login import login_required as flask_login_required
     #     func = flask_login_required(func)
     # current_app.add_url_rule(url, view_func=func, methods=methods)
+
+def render_route(dynamic_path):
+    route = Route.query.filter_by(url_path=dynamic_path).first()
+    if not route:
+        abort(404)
+
+    uploads_dir = current_app.config['UPLOAD_FOLDER']
+    if route.response_type == 'template':
+        env = Environment(loader=FileSystemLoader(uploads_dir))
+        template = env.get_template(route.filename)
+        return template.render()
+    elif route.response_type == 'file':
+        return send_from_directory(uploads_dir, route.filename)

@@ -1,5 +1,7 @@
 const dropArea = document.getElementById('drop-new-payload');
+const updateDropArea = document.getElementById('drop-updated-payload');
 const fileName = document.getElementById('file-name');
+const newFileName = document.getElementById('new-file-name');
 
 dropArea.addEventListener('drop', function (e) {
     e.preventDefault();

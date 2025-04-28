@@ -1,9 +1,9 @@
 from ..models import AppConfig, User
 from werkzeug.utils import secure_filename
-from app.utils.route_utils import register_route, render_route
+from app.utils.route_utils import fetch_all_route, register_route, render_route
 from werkzeug.security import check_password_hash
 from flask_login import current_user, login_required, login_user, logout_user
-from flask import Blueprint, flash, jsonify, redirect, render_template, request, url_for
+from flask import Blueprint, flash, redirect, render_template, request, url_for
 
 bp = Blueprint('main', __name__, template_folder='templates')
 
@@ -15,7 +15,7 @@ def admin():
     if not config.setup_complete:
         return redirect(url_for('onboarding.setup'))
 
-    return render_template('breach/admin.html', username=current_user.username)
+    return render_template('breach/admin.html', username=current_user.username, route_list=fetch_all_route())
 
 @bp.route('/login', methods=["GET", "POST"])
 def login_handler():
@@ -72,6 +72,10 @@ def add_route():
         # return jsonify({"error": "Payload is required"}), 400
         return redirect(url_for('main.admin'))
     
+@bp.route('/update_route', methods=['POST'])
+@login_required
+def update_route():
+    return "Test"
 
 @bp.route('/<path:dynamic_path>')
 def dynamic_handler(dynamic_path):

@@ -54,3 +54,7 @@ def render_route(dynamic_path):
         return template.render()
     elif route.response_type == 'file':
         return send_from_directory(uploads_dir, route.filename)
+
+def fetch_all_route():
+    routes = Route.query.all()
+    return routes

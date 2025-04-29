@@ -100,6 +100,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 window.open("/"+ tr.id, '_blank'); 
             }
         }
+
+        const copyBtn = event.target.closest('[data-copy-to-clipboard]');
+        if (copyBtn) {
+            const container = copyBtn.closest('.flex');
+            const contentSpan = container.querySelector('[data-copy-content]');
+            contentSpan.textContent = window.location.origin + "/" + tr.id;
+            const textToCopy = contentSpan.textContent.trim();
+    
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                const defaultIcon = copyBtn.querySelector('.default-icon');
+                const successIcon = copyBtn.querySelector('.success-icon');
+                defaultIcon.classList.add('hidden');
+                successIcon.classList.remove('hidden');
+                setTimeout(() => {
+                    defaultIcon.classList.remove('hidden');
+                    successIcon.classList.add('hidden');
+                }, 1000);
+            });
+        }
     });
 });
 

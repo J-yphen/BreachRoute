@@ -1,60 +1,71 @@
-const dropArea = document.getElementById('drop-new-payload');
-const updateDropArea = document.getElementById('drop-updated-payload');
-const fileName = document.getElementById('file-name');
-const newFileName = document.getElementById('new-file-name');
-
-dropArea.addEventListener('drop', function (e) {
-    e.preventDefault();
-    e.stopPropagation();
-    dropArea.classList.remove('bg-gray-100', 'dark:bg-gray-600');
-
-    const files = e.dataTransfer.files;
-    if (files.length > 0) {
-        dropArea.files = files
-        fileName.textContent = `File uploaded: ${files[0].name}`;
-    }
-});
-
-dropArea.addEventListener('change', function (e) {
-    let files = e.target.files;
-    if (files.length > 0) {
-        fileName.textContent = `File uploaded: ${files[0].name}`;
-    }
-});
-
-updateDropArea.addEventListener('drop', function (e) {
-    e.preventDefault();
-    e.stopPropagation();
-    updateDropArea.classList.remove('bg-gray-100', 'dark:bg-gray-600');
-
-    const files = e.dataTransfer.files;
-    if (files.length > 0) {
-        updateDropArea.files = files
-        newFileName.textContent = `File uploaded: ${files[0].name}`;
-    }
-});
-
-updateDropArea.addEventListener('change', function (e) {
-    let files = e.target.files;
-    if (files.length > 0) {
-        newFileName.textContent = `File uploaded: ${files[0].name}`;
-    }
-});
-
-function resetForm() {
-    document.getElementById('create-link-form').reset();
-}
-
 document.addEventListener('DOMContentLoaded', () => {
+    setupDropAreas();
     setupTableButtonHandler();
     setupSelectAllCheckbox();
+    setupDeleteConfirmation();
 });
+
+// --- File Drop Areas ---
+
+function setupDropAreas() {
+    const dropConfigs = [
+        {
+            areaId: 'drop-new-payload',
+            fileNameId: 'file-name'
+        },
+        {
+            areaId: 'drop-updated-payload',
+            fileNameId: 'new-file-name'
+        }
+    ];
+
+    dropConfigs.forEach(({ areaId, fileNameId }) => {
+        const dropArea = document.getElementById(areaId);
+        const fileName = document.getElementById(fileNameId);
+
+        if (!dropArea || !fileName) return;
+
+        // Drag over styling
+        dropArea.addEventListener('dragover', e => {
+            e.preventDefault();
+            dropArea.classList.add('bg-gray-100', 'dark:bg-gray-600');
+        });
+
+        dropArea.addEventListener('dragleave', e => {
+            e.preventDefault();
+            dropArea.classList.remove('bg-gray-100', 'dark:bg-gray-600');
+        });
+
+        // Drop event
+        dropArea.addEventListener('drop', e => {
+            e.preventDefault();
+            e.stopPropagation();
+            dropArea.classList.remove('bg-gray-100', 'dark:bg-gray-600');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                // Optionally, you might want to store files somewhere
+                // dropArea.files = files; // Not standard, but if you use a custom property
+                fileName.textContent = `File uploaded: ${files[0].name}`;
+            }
+        });
+
+        // File input change (if dropArea is an <input type="file">)
+        dropArea.addEventListener('change', e => {
+            const files = e.target.files;
+            if (files.length > 0) {
+                fileName.textContent = `File uploaded: ${files[0].name}`;
+            }
+        });
+    });
+}
+
+// --- Table Button Actions ---
 
 function setupTableButtonHandler() {
     const table = document.querySelector('table');
     if (!table) return;
 
-    table.addEventListener('click', (event) => {
+    table.addEventListener('click', event => {
         let button = event.target.closest('button');
         if (!button) return;
         let tr = button.closest('tr');
@@ -75,6 +86,7 @@ function setupTableButtonHandler() {
                 break;
         }
 
+        // Copy to clipboard
         const copyBtn = event.target.closest('[data-copy-to-clipboard]');
         if (copyBtn && tr) {
             handleCopyToClipboard(copyBtn, tr);
@@ -82,23 +94,45 @@ function setupTableButtonHandler() {
     });
 }
 
+// --- Select All Checkbox ---
+
 function setupSelectAllCheckbox() {
     const selectAllCheckbox = document.getElementById('checkbox-all');
     const rowCheckboxes = document.querySelectorAll('.row-checkbox');
     if (!selectAllCheckbox || rowCheckboxes.length === 0) return;
 
-    // When header checkbox is toggled, set all row checkboxes
     selectAllCheckbox.addEventListener('change', function() {
         rowCheckboxes.forEach(cb => cb.checked = selectAllCheckbox.checked);
     });
 
-    // When any row checkbox is toggled, update header checkbox
     rowCheckboxes.forEach(cb => {
         cb.addEventListener('change', function() {
             selectAllCheckbox.checked = Array.from(rowCheckboxes).every(c => c.checked);
         });
     });
 }
+
+// --- Delete Confirmation ---
+
+function setupDeleteConfirmation() {
+    const yesButton = document.getElementById('confirm-delete-btn');
+    if (!yesButton) return;
+
+    yesButton.addEventListener('click', function() {
+        let url_path = document.getElementById('delete-row-id').value;
+        fetch('delete_route/' + url_path)
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+                window.location.href = data.redirect;
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    });
+}
+
+// --- Row Action Handlers ---
 
 function handleEdit(tr) {
     if (!tr) return;
@@ -162,27 +196,20 @@ function handleCopyToClipboard(copyBtn, tr) {
     navigator.clipboard.writeText(textToCopy).then(() => {
         const defaultIcon = copyBtn.querySelector('.default-icon');
         const successIcon = copyBtn.querySelector('.success-icon');
-        defaultIcon.classList.add('hidden');
-        successIcon.classList.remove('hidden');
-        setTimeout(() => {
-            defaultIcon.classList.remove('hidden');
-            successIcon.classList.add('hidden');
-        }, 1000);
+        if (defaultIcon && successIcon) {
+            defaultIcon.classList.add('hidden');
+            successIcon.classList.remove('hidden');
+            setTimeout(() => {
+                defaultIcon.classList.remove('hidden');
+                successIcon.classList.add('hidden');
+            }, 1000);
+        }
     });
 }
 
-const yesButton = document.getElementById('confirm-delete-btn');
-yesButton.addEventListener('click', function() {
-    let url_path = document.getElementById('delete-row-id').value;
-    fetch('delete_route/'+ url_path)
-    .then((response) => {
-        return response.json();
-    })
-    .then((data) => {
-        alert(data.message);
-        window.location.href = data.redirect;
-    })
-    .catch(function(error) {
-        console.log(error);
-    });
-});
+// --- Utility ---
+
+function resetForm() {
+    const form = document.getElementById('create-link-form');
+    if (form) form.reset();
+}

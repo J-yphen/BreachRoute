@@ -95,6 +95,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if (tr) {
                 document.getElementById('delete-row-id').value = tr.id;
             }
+        } else if (button.textContent.trim() === 'Preview') {
+            if (tr) {
+                window.open("/"+ tr.id, '_blank'); 
+            }
         }
     });
 });

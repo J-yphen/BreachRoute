@@ -13,7 +13,7 @@ def register_route(url_path, filename, payload, isFile):
     file_path = os.path.join(uploads_dir, filename)
     url_path = url_path.lstrip('/')
 
-    if not url_path or not bool(re.fullmatch(r'[A-Za-z0-9_-]+', url_path)):
+    if not url_path or not bool(re.fullmatch(r'[A-Za-z0-9._/-]+', url_path)):
         # return jsonify({"error": "URL Path is not valid"}), 400
         return "URL Path is not valid"
 
@@ -21,7 +21,7 @@ def register_route(url_path, filename, payload, isFile):
         # return jsonify({"error": "Route already exists"}), 400
         return "Route already exists"
     
-    if is_valid(filename):
+    if not is_valid(filename):
         return "Filename is not valid"
     
     if os.path.exists(file_path) or Route.query.filter_by(filename=filename).first():
@@ -120,9 +120,13 @@ def modify_route_visibility(url_path):
 
 def remove_route(url_path):
     route = Route.query.filter_by(url_path=url_path).first()
+    
+    uploads_dir = current_app.config['UPLOAD_FOLDER']
+    file_path = os.path.join(uploads_dir, route.filename)
     try:
         db.session.delete(route)
         db.session.commit()
+        os.remove(file_path)
         return "Route deleted successfully"
     except Exception as e:
         db.session.rollback()

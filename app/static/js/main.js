@@ -3,7 +3,8 @@ document.addEventListener('DOMContentLoaded', () => {
     setupTableButtonHandler();
     setupSelectAllCheckbox();
     setupDeleteConfirmation();
-    setupLinkFilterLogging(); 
+    setupLinkFilterLogging();
+    setupBulkActions(); 
 });
 
 // --- File Drop Areas ---
@@ -174,6 +175,73 @@ function setupLinkFilterLogging() {
     // Add event listeners
     activeCheckbox.addEventListener('change', filterRows);
     inactiveCheckbox.addEventListener('change', filterRows);
+}
+
+// --- Bulk Actions ---
+
+function setupBulkActions() {
+    const bulkToggleVisibilityBtn = document.getElementById('bulk-toggle-btn');
+    const bulkDeleteBtn = document.getElementById('bulk-delete-btn');
+    const rowCheckboxes = document.querySelectorAll('.row-checkbox');
+
+    if (bulkToggleVisibilityBtn) {
+        bulkToggleVisibilityBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const selectedRows = getSelectedRows(rowCheckboxes);
+            if (selectedRows.length === 0) {
+                alert('Please select at least one row to deactivate.');
+                return;
+            }
+            bulkToggleVisibility(selectedRows);
+        });
+    }
+
+    if (bulkDeleteBtn) {
+        bulkDeleteBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const selectedRows = getSelectedRows(rowCheckboxes);
+            if (selectedRows.length === 0) {
+                alert('Please select at least one row to delete.');
+                return;
+            }
+            if (!confirm('Are you sure you want to delete the selected rows?')) return;
+            bulkDelete(selectedRows);
+        });
+    }
+}
+
+// Helper: Get selected table rows based on checked checkboxes
+function getSelectedRows(rowCheckboxes) {
+    const selected = [];
+    rowCheckboxes.forEach(cb => {
+        if (cb.checked) {
+            const tr = cb.closest('tr');
+            if (tr) selected.push(tr);
+        }
+    });
+    return selected;
+}
+
+// Bulk deactivate/activate (calls your existing handleToggleVisibility on each row)
+function bulkToggleVisibility(rows) {
+    rows.forEach(tr => {
+        handleToggleVisibility(tr);
+    });
+}
+
+// Bulk delete (calls your existing handleDelete on each row)
+function bulkDelete(rows) {
+    rows.forEach(tr => {
+        fetch('delete_route/' + tr.id)
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+                window.location.href = data.redirect;
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    });
 }
 
 // --- Row Action Handlers ---

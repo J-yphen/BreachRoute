@@ -91,6 +91,26 @@ document.addEventListener('DOMContentLoaded', () => {
                     console.log(error);
                 });
             }
+        } else if (button.textContent.trim() === 'Delete') {
+            if (tr) {
+                document.getElementById('delete-row-id').value = tr.id;
+            }
         }
+    });
+});
+
+const yesButton = document.getElementById('confirm-delete-btn');
+yesButton.addEventListener('click', function() {
+    let url_path = document.getElementById('delete-row-id').value;
+    fetch('delete_route/'+ url_path)
+    .then((response) => {
+        return response.json();
+    })
+    .then((data) => {
+        alert(data.message);
+        window.location.href = data.redirect;
+    })
+    .catch(function(error) {
+        console.log(error);
     });
 });

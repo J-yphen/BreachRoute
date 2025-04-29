@@ -1,6 +1,6 @@
 from ..models import AppConfig, User
 from werkzeug.utils import secure_filename
-from app.utils.route_utils import fetch_all_route, fetch_route_payload, modify_route, modify_route_visibility, register_route, render_route
+from app.utils.route_utils import fetch_all_route, fetch_route_payload, modify_route, modify_route_visibility, register_route, remove_route, render_route
 from werkzeug.security import check_password_hash
 from flask_login import current_user, login_required, login_user, logout_user
 from flask import Blueprint, flash, jsonify, redirect, render_template, request, url_for
@@ -102,6 +102,11 @@ def update_route():
 @login_required
 def update_route_visibility(url_path):
     return jsonify({"message": modify_route_visibility(url_path), "redirect": url_for('main.admin')})
+
+@bp.route('/delete_route/<path:url_path>', methods=['GET'])
+@login_required
+def delete_route(url_path):
+    return jsonify({"message": remove_route(url_path), "redirect": url_for('main.admin')})
 
 @bp.route('/<path:dynamic_path>')
 @login_required

@@ -118,6 +118,16 @@ def modify_route_visibility(url_path):
         db.session.rollback()
         return str(e)
 
+def remove_route(url_path):
+    route = Route.query.filter_by(url_path=url_path).first()
+    try:
+        db.session.delete(route)
+        db.session.commit()
+        return "Route deleted successfully"
+    except Exception as e:
+        db.session.rollback()
+        return str(e)
+
 # uploads_dir = current_app.config['UPLOAD_FOLDER']
 #     for route in routes:
 #         file_path = os.path.join(uploads_dir, route.filename)

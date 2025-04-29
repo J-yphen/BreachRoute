@@ -132,6 +132,11 @@ def remove_route(url_path):
         db.session.rollback()
         return str(e)
 
+def search_route(search_field):
+    if search_field != "":
+        return Route.query.filter(Route.url_path.ilike(f"%{search_field}%")).all()
+    else:
+        return fetch_all_route()
 # uploads_dir = current_app.config['UPLOAD_FOLDER']
 #     for route in routes:
 #         file_path = os.path.join(uploads_dir, route.filename)

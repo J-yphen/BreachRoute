@@ -1,6 +1,6 @@
 from ..models import AppConfig, User
 from werkzeug.utils import secure_filename
-from app.utils.route_utils import fetch_all_route, fetch_route_payload, modify_route, modify_route_visibility, register_route, remove_route, render_route
+from app.utils.route_utils import fetch_all_route, fetch_route_payload, modify_route, modify_route_visibility, register_route, remove_route, render_route, search_route
 from werkzeug.security import check_password_hash
 from flask_login import current_user, login_required, login_user, logout_user
 from flask import Blueprint, flash, jsonify, redirect, render_template, request, url_for
@@ -117,3 +117,9 @@ def dynamic_handler(dynamic_path):
 @login_required
 def fetch_payload(url_path):
     return jsonify({"payload": fetch_route_payload(url_path)})
+
+@bp.route('/find_route', methods=['GET'])
+@login_required
+def find_route():
+    search_field = request.args.get('query', '')
+    return render_template('breach/admin.html', username=current_user.username, route_list=search_route(search_field=search_field))

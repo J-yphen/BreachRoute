@@ -34,7 +34,7 @@ def login_handler():
         user = User.query.filter_by(username=username).first()
 
         if not user or not check_password_hash(user.password, password):
-            flash('Please check your login details and try again.')
+            flash("Please check your login details and try again.", "error")
             return redirect(url_for('main.login_handler'))
         login_user(user, remember=remember)
         return redirect(url_for('main.admin'))
@@ -53,22 +53,22 @@ def add_route():
     payload = request.form.get('payload')
 
     if not filename:
-        flash("Filename is required")
+        flash("Filename is required", "info")
         # return jsonify({"error": "Filename is required"}), 400
         return redirect(url_for('main.admin'))
     
     if request.files.get('file-payload').filename != "":
         payload_file = request.files['file-payload']
-        res = register_route(url_path=url_path, filename=filename, payload=payload_file, isFile=True)
-        flash(res)
+        res, catgry = register_route(url_path=url_path, filename=filename, payload=payload_file, isFile=True)
+        flash(res, catgry)
         return redirect(url_for('main.admin'))
 
     elif payload:
-        res = register_route(url_path=url_path, filename=filename, payload=payload, isFile=False)
-        flash(res)
+        res, catgry = register_route(url_path=url_path, filename=filename, payload=payload, isFile=False)
+        flash(res, catgry)
         return redirect(url_for('main.admin'))
     else:
-        flash("Payload is required")
+        flash("Payload is required", "info")
         # return jsonify({"error": "Payload is required"}), 400
         return redirect(url_for('main.admin'))
     
@@ -81,21 +81,21 @@ def update_route():
     old_url_path_id = request.form.get('update-path')
 
     if not filename:
-        flash("Filename is required")
+        flash("Filename is required", "info")
         return redirect(url_for('main.admin'))
     
     if request.files.get('file-payload').filename != "":
         payload_file = request.files['file-payload']
-        res = modify_route(old_url_path_id=old_url_path_id, new_url_path=url_path, new_filename=filename, payload=payload_file, isFile=True)
-        flash(res)
+        res, catgry = modify_route(old_url_path_id=old_url_path_id, new_url_path=url_path, new_filename=filename, payload=payload_file, isFile=True)
+        flash(res, catgry)
         return redirect(url_for('main.admin'))
 
     elif payload:
-        res = modify_route(old_url_path_id=old_url_path_id, new_url_path=url_path, new_filename=filename, payload=payload, isFile=False)
-        flash(res)
+        res, catgry = modify_route(old_url_path_id=old_url_path_id, new_url_path=url_path, new_filename=filename, payload=payload, isFile=False)
+        flash(res, catgry)
         return redirect(url_for('main.admin'))
     else:
-        flash("Payload is required")
+        flash("Payload is required", "info")
         return redirect(url_for('main.admin'))
 
 @bp.route('/update_route_visibility/<path:url_path>', methods=['GET'])

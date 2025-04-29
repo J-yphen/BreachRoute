@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupBulkActions();
     setupSearchForm();
     setupClearAllFilters();
+    setupAutoDismissAlerts();
 });
 
 // --- File Drop Areas ---
@@ -278,6 +279,28 @@ function setupClearAllFilters() {
         if (inactiveCheckbox) inactiveCheckbox.checked = false;
         // Show all rows
         tableRows.forEach(row => row.style.display = '');
+    });
+}
+
+// --- Alert Auto-Dismiss and Close Handler ---
+
+function setupAutoDismissAlerts() {
+    document.querySelectorAll('.auto-dismiss-alert .close-alert-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            const alert = btn.closest('.auto-dismiss-alert');
+            if (alert) {
+                alert.classList.add('opacity-0');
+                setTimeout(() => alert.remove(), 700); // match duration-700
+            }
+        });
+    });
+
+    // Auto-dismiss after 3 seconds
+    document.querySelectorAll('.auto-dismiss-alert').forEach(function(alert) {
+        setTimeout(function() {
+            alert.classList.add('opacity-0');
+            setTimeout(() => alert.remove(), 700); // match duration-700
+        }, 3000); // 3 seconds
     });
 }
 

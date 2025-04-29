@@ -15,18 +15,18 @@ def register_route(url_path, filename, payload, isFile):
 
     if not url_path or not bool(re.fullmatch(r'[A-Za-z0-9._/-]+', url_path)):
         # return jsonify({"error": "URL Path is not valid"}), 400
-        return "URL Path is not valid"
+        return "URL Path is not valid", "error"
 
     if Route.query.filter_by(url_path=url_path).first():
         # return jsonify({"error": "Route already exists"}), 400
-        return "Route already exists"
+        return "Route already exists", "info"
     
     if not is_valid(filename):
-        return "Filename is not valid"
+        return "Filename is not valid", "error"
     
     if os.path.exists(file_path) or Route.query.filter_by(filename=filename).first():
         # return jsonify({"error": "Filename already exists"}), 400
-        return "Filename already exists"
+        return "Filename already exists", "info"
     
     if isFile:
         payload.save(file_path)
@@ -45,7 +45,7 @@ def register_route(url_path, filename, payload, isFile):
     db.session.commit()
 
     # return jsonify({"message": "Route added successfully"}), 201
-    return "Route added successfully"
+    return "Route added successfully", "success"
 
 def render_route(dynamic_path):
     route = Route.query.filter_by(url_path=dynamic_path).first()
@@ -86,15 +86,15 @@ def modify_route(old_url_path_id, new_url_path, new_filename, payload, isFile):
                 if Route.query.filter_by(filename=new_filename) == None and is_valid(new_filename):
                     old_route.filename = new_filename
                 else:
-                    return "Filename is not valid"
+                    return "Filename is not valid", "error"
         else:
-            return "URL Path is not valid"
+            return "URL Path is not valid", "error"
     else:
         if old_route.filename != new_filename:
             if Route.query.filter_by(filename=new_filename) == None and is_valid(new_filename):
                 old_route.filename = new_filename
             else:
-                return "Filename is not valid"
+                return "Filename is not valid", "error"
     
     if isFile:
         payload.save(file_path)
@@ -103,7 +103,7 @@ def modify_route(old_url_path_id, new_url_path, new_filename, payload, isFile):
             file.write(payload)
     try:
         db.session.commit()
-        return "Route updated successfully"
+        return "Route updated successfully", "success"
     except Exception as e:
         db.session.rollback()
         return str(e)
@@ -113,7 +113,7 @@ def modify_route_visibility(url_path):
     route.path_visible = not route.path_visible
     try:
         db.session.commit()
-        return "Route updated successfully"
+        return "Route updated successfully", "success"
     except Exception as e:
         db.session.rollback()
         return str(e)
@@ -127,7 +127,7 @@ def remove_route(url_path):
         db.session.delete(route)
         db.session.commit()
         os.remove(file_path)
-        return "Route deleted successfully"
+        return "Route deleted successfully", "success"
     except Exception as e:
         db.session.rollback()
         return str(e)

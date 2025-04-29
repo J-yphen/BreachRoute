@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupLinkFilterLogging();
     setupBulkActions();
     setupSearchForm();
+    setupClearAllFilters();
 });
 
 // --- File Drop Areas ---
@@ -259,6 +260,25 @@ function setupSearchForm() {
             window.location.href = `/find_route?query=${encodeURIComponent(query)}`;
         });
     }
+}
+
+// --- "Clear all" Filter Handler ---
+
+function setupClearAllFilters() {
+    const clearAllLink = document.getElementById('clearAllFilters');
+    const activeCheckbox = document.getElementById('active_links');
+    const inactiveCheckbox = document.getElementById('inactive_links');
+    const tableRows = document.querySelectorAll('tr[data-status]');
+
+    if (!clearAllLink) return;
+
+    clearAllLink.addEventListener('click', function(e) {
+        e.preventDefault();
+        if (activeCheckbox) activeCheckbox.checked = false;
+        if (inactiveCheckbox) inactiveCheckbox.checked = false;
+        // Show all rows
+        tableRows.forEach(row => row.style.display = '');
+    });
 }
 
 // --- Row Action Handlers ---

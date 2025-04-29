@@ -7,7 +7,7 @@ from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 migrate = Migrate()
 
-def create_app(config_class='config.Config'):
+def create_app(config_class='config.ProductionConfig'):
     app = Flask(__name__, 
                 static_folder='static',
                 template_folder='templates')

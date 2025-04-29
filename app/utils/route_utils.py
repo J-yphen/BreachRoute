@@ -49,7 +49,7 @@ def register_route(url_path, filename, payload, isFile):
 
 def render_route(dynamic_path):
     route = Route.query.filter_by(url_path=dynamic_path).first()
-    if not route:
+    if not route or not route.path_visible:
         abort(404)
 
     uploads_dir = current_app.config['UPLOAD_FOLDER']
@@ -101,6 +101,16 @@ def modify_route(old_url_path_id, new_url_path, new_filename, payload, isFile):
     else:
         with open(file_path, 'w+') as file:
             file.write(payload)
+    try:
+        db.session.commit()
+        return "Route updated successfully"
+    except Exception as e:
+        db.session.rollback()
+        return str(e)
+
+def modify_route_visibility(url_path):
+    route = Route.query.filter_by(url_path=url_path).first()
+    route.path_visible = not route.path_visible
     try:
         db.session.commit()
         return "Route updated successfully"

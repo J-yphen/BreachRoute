@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupTableButtonHandler();
     setupSelectAllCheckbox();
     setupDeleteConfirmation();
+    setupLinkFilterLogging(); 
 });
 
 // --- File Drop Areas ---
@@ -130,6 +131,49 @@ function setupDeleteConfirmation() {
                 console.log(error);
             });
     });
+}
+
+// --- Link Filter Logging ---
+
+function setupLinkFilterLogging() {
+    const activeCheckbox = document.getElementById('active_links');
+    const inactiveCheckbox = document.getElementById('inactive_links');
+    const tableRows = document.querySelectorAll('tr[data-status]');
+
+    if (!activeCheckbox || !inactiveCheckbox) {
+        console.log('Filter checkboxes not found in DOM.');
+        return;
+    }
+
+    function filterRows() {
+        const showActive = activeCheckbox.checked;
+        const showInactive = inactiveCheckbox.checked;
+
+        // If no filters selected, show all rows (default behavior)
+        if (!showActive && !showInactive) {
+            tableRows.forEach(row => {
+                row.style.display = '';
+            });
+            return;
+        }
+
+        // Otherwise, filter rows
+        tableRows.forEach(row => {
+            const status = row.getAttribute('data-status');
+            if (
+                (status === 'active' && showActive) ||
+                (status === 'inactive' && showInactive)
+            ) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+
+    // Add event listeners
+    activeCheckbox.addEventListener('change', filterRows);
+    inactiveCheckbox.addEventListener('change', filterRows);
 }
 
 // --- Row Action Handlers ---

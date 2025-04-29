@@ -109,7 +109,6 @@ def delete_route(url_path):
     return jsonify({"message": remove_route(url_path), "redirect": url_for('main.admin')})
 
 @bp.route('/<path:dynamic_path>')
-@login_required
 def dynamic_handler(dynamic_path):
     return render_route(dynamic_path)
 

@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupClearAllFilters();
     setupAutoDismissAlerts();
     setupS3BucketToggle();
+    deleteCurrentlyEditingRouteHandler();
 });
 
 // --- Windows.onload ---
@@ -347,6 +348,29 @@ function setupS3BucketToggle() {
         s3Fields.forEach(field => {
             field.required = toggleCheckbox.checked;
         });
+    });
+}
+
+// --- Delete Current Edit Route Handler ---
+
+function deleteCurrentlyEditingRouteHandler() {
+    let delete_btn = document.getElementById('delete-currently-editing-route');
+    let urlPathInput = document.getElementById('edit_url_path');
+    delete_btn.addEventListener("click", function() {
+        showLoadingScreen();
+        if(urlPathInput){
+            fetch('delete_route/' + urlPathInput.value)
+            .then(response => response.json())
+            .then(data => {
+                hideLoadingScreen();
+                setTimeout(() => {
+                    window.location.href = data.redirect;
+                }, 50);
+            })
+            .catch(error => {
+                console.log(error);
+            });
+        } 
     });
 }
 

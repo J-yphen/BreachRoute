@@ -1,4 +1,5 @@
 import os
+import boto3
 from flask import Flask
 from flask_migrate import Migrate
 from flask_login import LoginManager
@@ -16,6 +17,20 @@ def create_app(config_class='config.ProductionConfig'):
 
     db.init_app(app)
     migrate.init_app(app, db)
+
+    s3_client = None
+    if app.config['S3_ACCESS_KEY'] and app.config['S3_SECRET_KEY']:
+        s3_client = boto3.client(
+            's3',
+            endpoint_url=app.config['S3_ENDPOINT_URL'],
+            aws_access_key_id=app.config['S3_ACCESS_KEY'],
+            aws_secret_access_key=app.config['S3_SECRET_KEY'],
+            region_name=app.config['S3_REGION']
+        )
+        app.s3_client = s3_client
+    else:
+        app.s3_client = None
+        print("S3 bucket not configured")
 
     from . import models
 

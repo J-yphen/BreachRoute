@@ -8,7 +8,7 @@ dist/
 htmlcov/
 .tox/
 docs/_build/
-app/breach_route/node_modules
+node_modules/
 app/static/src
 links
 .env

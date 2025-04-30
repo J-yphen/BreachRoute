@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupSearchForm();
     setupClearAllFilters();
     setupAutoDismissAlerts();
+    setupS3BucketToggle();
 });
 
 // --- Windows.onload ---
@@ -324,6 +325,28 @@ function setupAutoDismissAlerts() {
             alert.classList.add('opacity-0');
             setTimeout(() => alert.remove(), 700); // match duration-700
         }, 3000); // 3 seconds
+    });
+}
+
+// --- S3 Bucket Toggle Handler ---
+
+function setupS3BucketToggle() {
+    const toggleCheckbox = document.getElementById('toggle-s3-details-div');
+    const s3Details = document.getElementById('s3-details');
+
+    if (!toggleCheckbox || !s3Details) return;
+
+    s3Details.classList.toggle('hidden', !toggleCheckbox.checked);
+
+    // Handle toggle changes
+    toggleCheckbox.addEventListener('change', () => {
+        s3Details.classList.toggle('hidden', !toggleCheckbox.checked);
+        
+        // Toggle required attributes for S3 fields
+        const s3Fields = s3Details.querySelectorAll('input');
+        s3Fields.forEach(field => {
+            field.required = toggleCheckbox.checked;
+        });
     });
 }
 

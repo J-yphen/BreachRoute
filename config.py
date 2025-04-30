@@ -11,6 +11,12 @@ class Config:
     UPLOAD_FOLDER = os.path.join(BASE_DIR, 'app', 'uploads')
     MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB
 
+    S3_ACCESS_KEY = os.getenv('S3_ACCESS_KEY', None)
+    S3_SECRET_KEY = os.getenv('S3_SECRET_KEY', None)
+    S3_BUCKET_NAME = os.getenv('S3_BUCKET_NAME', 'NOT_APPLICABLE')
+    S3_REGION = os.getenv('S3_REGION', 'NOT_APPLICABLE')
+    S3_ENDPOINT_URL = os.getenv('S3_ENDPOINT_URL', 'NOT_APPLICABLE')
+
 class ProductionConfig(Config):
     DEBUG = False
     SESSION_COOKIE_SECURE = True

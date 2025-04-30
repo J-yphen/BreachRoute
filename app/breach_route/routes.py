@@ -118,7 +118,11 @@ def dynamic_handler(dynamic_path):
 @bp.route('/fetch_payload/<path:url_path>', methods=['GET'])
 @login_required
 def fetch_payload(url_path):
-    return jsonify({"payload": fetch_route_payload(url_path)})
+    payload, msg = fetch_route_payload(url_path)
+    if msg == "success":
+        return jsonify({"payload": payload})
+    else:
+        return jsonify({"msg": payload})
 
 @bp.route('/find_route', methods=['GET'])
 @login_required

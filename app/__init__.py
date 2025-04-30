@@ -30,8 +30,7 @@ def create_app(config_class='config.ProductionConfig'):
         app.s3_client = s3_client
     else:
         app.s3_client = None
-        print("S3 bucket not configured")
-
+        
     from . import models
 
     with app.app_context():

@@ -104,8 +104,12 @@ def fetch_route_payload(url_path):
         return payload
 
     file_path = os.path.join(uploads_dir, route.filename)
-    with open(file_path, 'r') as file:
-        return file.read()
+    try:
+        with open(file_path, 'r') as file:
+            return file.read(), "success"
+    except Exception as e:
+        current_app.logger.critical(str(e))
+        return "PAYLOAD CAN NOT BE RENDERED", "error"
 
 def modify_route(old_url_path_id, new_url_path, new_filename, payload, isFile):
     uploads_dir = current_app.config['UPLOAD_FOLDER']

@@ -349,7 +349,12 @@ function handleEdit(tr) {
         fetch('fetch_payload/' + tr.id)
             .then(response => response.json())
             .then(data => {
-                payloadInput.value = data.payload;
+                if(data.msg === undefined){
+                    payloadInput.value = data.payload;
+                }
+                else {
+                    payloadInput.value = "==========" + data.msg + "==========";
+                }
                 hideLoadingScreen();
             })
             .catch(error => {

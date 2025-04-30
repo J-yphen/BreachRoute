@@ -5,11 +5,9 @@
 
 {% block content %}
 
-{% with messages = get_flashed_messages() %}
-	{% if messages %}
-		<script>alert('{{ messages[0] }}')</script>
-	{% endif %}
-{% endwith %}
+<div id="notification-area">
+    {% include 'flash_messages.html' %}
+</div>
 
 <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto max-w-md lg:py-0 h-screen">
 	<a href="#" class="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white">

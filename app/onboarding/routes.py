@@ -20,7 +20,7 @@ def setup():
         
         user = User.query.filter_by(username=username).first()
         if user:
-            flash('Username or path already exists')
+            flash("Username or path already exists", "error")
             return render_template('onboarding/setup.html')
         
         new_user = User(username=username, password=generate_password_hash(password))
@@ -28,6 +28,7 @@ def setup():
         db.session.add(new_user)
         config.setup_complete = True
         db.session.commit()
+        flash("Setup has been completed successfully", "success")
         return redirect(url_for('main.login_handler'))
 
     return render_template('onboarding/setup.html')

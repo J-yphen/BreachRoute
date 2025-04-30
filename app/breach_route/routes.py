@@ -101,7 +101,9 @@ def update_route():
 @bp.route('/update_route_visibility/<path:url_path>', methods=['GET'])
 @login_required
 def update_route_visibility(url_path):
-    return jsonify({"message": modify_route_visibility(url_path), "redirect": url_for('main.admin')})
+    res, catgry = modify_route_visibility(url_path)
+    flash(res, catgry)
+    return jsonify({"message": res, "redirect": url_for('main.admin')})
 
 @bp.route('/delete_route/<path:url_path>', methods=['GET'])
 @login_required

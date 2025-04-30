@@ -338,7 +338,6 @@ function handleToggleVisibility(tr) {
     fetch('update_route_visibility/' + tr.id)
         .then(response => response.json())
         .then(data => {
-            alert(data.message);
             window.location.href = data.redirect;
         })
         .catch(error => {

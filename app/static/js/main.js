@@ -10,16 +10,22 @@ document.addEventListener('DOMContentLoaded', () => {
     setupAutoDismissAlerts();
 });
 
+// --- Windows.onload ---
+
+window.onload = function() {
+    hideLoadingScreen();
+};
+
 // --- File Drop Areas ---
 
 function setupDropAreas() {
     const dropConfigs = [
         {
-            areaId: 'drop-new-payload',
+            areaId: 'upload-new-payload',
             fileNameId: 'file-name'
         },
         {
-            areaId: 'drop-updated-payload',
+            areaId: 'upload-updated-payload',
             fileNameId: 'new-file-name'
         }
     ];
@@ -33,11 +39,15 @@ function setupDropAreas() {
         // Drag over styling
         dropArea.addEventListener('dragover', e => {
             e.preventDefault();
-            dropArea.classList.add('bg-gray-100', 'dark:bg-gray-600');
+            e.stopPropagation();
+            if (e.dataTransfer.types.includes("Files")) {
+                dropArea.classList.add('bg-gray-100', 'dark:bg-gray-600');
+            }
         });
 
         dropArea.addEventListener('dragleave', e => {
             e.preventDefault();
+            e.stopPropagation();
             dropArea.classList.remove('bg-gray-100', 'dark:bg-gray-600');
         });
 
@@ -50,12 +60,15 @@ function setupDropAreas() {
             if (files.length > 0) {
                 // Optionally, you might want to store files somewhere
                 // dropArea.files = files; // Not standard, but if you use a custom property
+                fileName.files = files;
                 fileName.textContent = `File uploaded: ${files[0].name}`;
             }
         });
 
         // File input change (if dropArea is an <input type="file">)
         dropArea.addEventListener('change', e => {
+            e.preventDefault();
+            e.stopPropagation();
             const files = e.target.files;
             if (files.length > 0) {
                 fileName.textContent = `File uploaded: ${files[0].name}`;
@@ -125,10 +138,14 @@ function setupDeleteConfirmation() {
 
     yesButton.addEventListener('click', function() {
         let url_path = document.getElementById('delete-row-id').value;
+        showLoadingScreen();
         fetch('delete_route/' + url_path)
             .then(response => response.json())
             .then(data => {
-                window.location.href = data.redirect;
+                hideLoadingScreen();
+                setTimeout(() => {
+                    window.location.href = data.redirect;
+                }, 50);
             })
             .catch(error => {
                 console.log(error);
@@ -233,12 +250,15 @@ function bulkToggleVisibility(rows) {
 
 // Bulk delete (calls your existing handleDelete on each row)
 function bulkDelete(rows) {
+    showLoadingScreen();
     rows.forEach(tr => {
         fetch('delete_route/' + tr.id)
             .then(response => response.json())
             .then(data => {
-                alert(data.message);
-                window.location.href = data.redirect;
+                hideLoadingScreen();
+                setTimeout(() => {
+                    window.location.href = data.redirect;
+                }, 50);
             })
             .catch(error => {
                 console.log(error);
@@ -321,10 +341,12 @@ function handleEdit(tr) {
     }
     let payloadInput = document.getElementById('update-payload');
     if (payloadInput) {
+        showLoadingScreen();
         fetch('fetch_payload/' + tr.id)
             .then(response => response.json())
             .then(data => {
                 payloadInput.value = data.payload;
+                hideLoadingScreen();
             })
             .catch(error => {
                 console.log(error);
@@ -334,10 +356,14 @@ function handleEdit(tr) {
 
 function handleToggleVisibility(tr) {
     if (!tr) return;
+    showLoadingScreen();
     fetch('update_route_visibility/' + tr.id)
         .then(response => response.json())
         .then(data => {
-            window.location.href = data.redirect;
+            hideLoadingScreen();
+            setTimeout(() => {
+                window.location.href = data.redirect;
+            }, 50);
         })
         .catch(error => {
             console.log(error);

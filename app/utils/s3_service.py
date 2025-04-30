@@ -39,7 +39,7 @@ def get_file(object_name):
     if s3:
         try:
             file_content = s3.get_object(Bucket=current_app.config['S3_BUCKET_NAME'], Key=object_name)['Body'].read()
-            return file_content
+            return file_content.decode("utf-8")
         except Exception as e:
             print(f"Error retrieving file: {e}")
             return None

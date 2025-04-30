@@ -976,9 +976,6 @@
   .top-0 {
     top: calc(var(--spacing) * 0);
   }
-  .top-1 {
-    top: calc(var(--spacing) * 1);
-  }
   .top-1\/2 {
     top: calc(1/2 * 100%);
   }
@@ -991,9 +988,6 @@
   .right-0 {
     right: calc(var(--spacing) * 0);
   }
-  .right-2 {
-    right: calc(var(--spacing) * 2);
-  }
   .right-2\.5 {
     right: calc(var(--spacing) * 2.5);
   }
@@ -1005,9 +999,6 @@
   }
   .left-0 {
     left: calc(var(--spacing) * 0);
-  }
-  .left-1 {
-    left: calc(var(--spacing) * 1);
   }
   .left-1\/2 {
     left: calc(1/2 * 100%);
@@ -1045,9 +1036,6 @@
       max-width: 96rem;
     }
   }
-  .-mx-1 {
-    margin-inline: calc(var(--spacing) * -1);
-  }
   .-mx-1\.5 {
     margin-inline: calc(var(--spacing) * -1.5);
   }
@@ -1059,9 +1047,6 @@
   }
   .mx-auto {
     margin-inline: auto;
-  }
-  .-my-1 {
-    margin-block: calc(var(--spacing) * -1);
   }
   .-my-1\.5 {
     margin-block: calc(var(--spacing) * -1.5);
@@ -1471,17 +1456,11 @@
       border-bottom-color: var(--color-gray-700) !important;
     }
   }
-  .-ml-0 {
-    margin-left: calc(var(--spacing) * -0);
-  }
   .-ml-0\.5 {
     margin-left: calc(var(--spacing) * -0.5);
   }
   .-ml-1 {
     margin-left: calc(var(--spacing) * -1);
-  }
-  .ml-1 {
-    margin-left: calc(var(--spacing) * 1);
   }
   .ml-1\.5 {
     margin-left: calc(var(--spacing) * 1.5);
@@ -1548,20 +1527,11 @@
   .h-10 {
     height: calc(var(--spacing) * 10);
   }
-  .h-12 {
-    height: calc(var(--spacing) * 12);
-  }
   .h-14 {
     height: calc(var(--spacing) * 14);
   }
   .h-16 {
     height: calc(var(--spacing) * 16);
-  }
-  .h-20 {
-    height: calc(var(--spacing) * 20);
-  }
-  .h-56 {
-    height: calc(var(--spacing) * 56);
   }
   .h-64 {
     height: calc(var(--spacing) * 64);
@@ -1670,9 +1640,6 @@
       text-align: center;
     }
   }
-  .w-1 {
-    width: calc(var(--spacing) * 1);
-  }
   .w-1\/2 {
     width: calc(1/2 * 100%);
   }
@@ -1694,17 +1661,11 @@
   .w-10 {
     width: calc(var(--spacing) * 10);
   }
-  .w-12 {
-    width: calc(var(--spacing) * 12);
-  }
   .w-14 {
     width: calc(var(--spacing) * 14);
   }
   .w-16 {
     width: calc(var(--spacing) * 16);
-  }
-  .w-20 {
-    width: calc(var(--spacing) * 20);
   }
   .w-44 {
     width: calc(var(--spacing) * 44);
@@ -1816,13 +1777,6 @@
   .shrink-0 {
     flex-shrink: 0;
   }
-  .border-collapse {
-    border-collapse: collapse;
-  }
-  .-translate-x-1 {
-    --tw-translate-x: calc(var(--spacing) * -1);
-    translate: var(--tw-translate-x) var(--tw-translate-y);
-  }
   .-translate-x-1\/2 {
     --tw-translate-x: calc(calc(1/2 * 100%) * -1);
     translate: var(--tw-translate-x) var(--tw-translate-y);
@@ -1837,10 +1791,6 @@
   }
   .translate-x-full {
     --tw-translate-x: 100%;
-    translate: var(--tw-translate-x) var(--tw-translate-y);
-  }
-  .-translate-y-1 {
-    --tw-translate-y: calc(var(--spacing) * -1);
     translate: var(--tw-translate-x) var(--tw-translate-y);
   }
   .-translate-y-1\/2 {
@@ -2291,9 +2241,6 @@
   .bg-gray-800 {
     background-color: var(--color-gray-800);
   }
-  .bg-gray-900 {
-    background-color: var(--color-gray-900);
-  }
   .bg-gray-900\/50 {
     background-color: color-mix(in srgb, #111827 50%, transparent);
     @supports (color: color-mix(in lab, red, red)) {
@@ -2382,18 +2329,6 @@
   .fill-blue-600 {
     fill: var(--color-blue-600);
   }
-  .apexcharts-gridline {
-    stroke: var(--color-gray-200) !important;
-    .dark & {
-      stroke: var(--color-gray-700) !important;
-    }
-  }
-  .apexcharts-xcrosshairs {
-    stroke: var(--color-gray-200) !important;
-    .dark & {
-      stroke: var(--color-gray-700) !important;
-    }
-  }
   .apexcharts-ycrosshairs {
     stroke: var(--color-gray-200) !important;
     .dark & {
@@ -2448,9 +2383,6 @@
   }
   .px-6 {
     padding-inline: calc(var(--spacing) * 6);
-  }
-  .py-0 {
-    padding-block: calc(var(--spacing) * 0);
   }
   .py-0\.5 {
     padding-block: calc(var(--spacing) * 0.5);
@@ -2627,10 +2559,6 @@
     --tw-leading: var(--leading-tight);
     line-height: var(--leading-tight);
   }
-  .font-black {
-    --tw-font-weight: var(--font-weight-black);
-    font-weight: var(--font-weight-black);
-  }
   .font-bold {
     --tw-font-weight: var(--font-weight-bold);
     font-weight: var(--font-weight-bold);
@@ -2769,9 +2697,6 @@
   }
   .uppercase {
     text-transform: uppercase;
-  }
-  .underline {
-    text-decoration-line: underline;
   }
   .antialiased {
     -webkit-font-smoothing: antialiased;

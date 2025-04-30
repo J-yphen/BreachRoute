@@ -62,7 +62,6 @@ def add_route():
         res, catgry = register_route(url_path=url_path, filename=filename, payload=payload_file, isFile=True)
         flash(res, catgry)
         return redirect(url_for('main.admin'))
-
     elif payload:
         res, catgry = register_route(url_path=url_path, filename=filename, payload=payload, isFile=False)
         flash(res, catgry)

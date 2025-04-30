@@ -22,17 +22,20 @@ function setupDropAreas() {
     const dropConfigs = [
         {
             areaId: 'upload-new-payload',
-            fileNameId: 'file-name'
+            fileNameId: 'drop-new-payload',
+            fileNameLabel: 'file-name'
         },
         {
             areaId: 'upload-updated-payload',
-            fileNameId: 'new-file-name'
+            fileNameId: 'drop-updated-payload',
+            fileNameLabel: 'new-file-name'
         }
     ];
 
-    dropConfigs.forEach(({ areaId, fileNameId }) => {
+    dropConfigs.forEach(({ areaId, fileNameId, fileNameLabel }) => {
         const dropArea = document.getElementById(areaId);
         const fileName = document.getElementById(fileNameId);
+        const fileLabel = document.getElementById(fileNameLabel);
 
         if (!dropArea || !fileName) return;
 
@@ -61,7 +64,8 @@ function setupDropAreas() {
                 // Optionally, you might want to store files somewhere
                 // dropArea.files = files; // Not standard, but if you use a custom property
                 fileName.files = files;
-                fileName.textContent = `File uploaded: ${files[0].name}`;
+                fileLabel.textContent = `File uploaded: ${files[0].name}`;
+
             }
         });
 
@@ -71,7 +75,7 @@ function setupDropAreas() {
             e.stopPropagation();
             const files = e.target.files;
             if (files.length > 0) {
-                fileName.textContent = `File uploaded: ${files[0].name}`;
+                fileLabel.textContent = `File uploaded: ${files[0].name}`;
             }
         });
     });

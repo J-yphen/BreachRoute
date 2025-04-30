@@ -1,8 +1,17 @@
-from flask import current_app
+import boto3
+from flask import current_app, g
 
 def get_s3_client():
     """Returns the S3 client from the app context."""
-    return current_app.s3_client
+    if 's3_client' not in g:
+        g.s3_client = boto3.client(
+            's3',
+            endpoint_url=current_app.config['S3_ENDPOINT_URL'],
+            aws_access_key_id=current_app.config['S3_ACCESS_KEY'],
+            aws_secret_access_key=current_app.config['S3_SECRET_KEY'],
+            region_name=current_app.config['S3_REGION']
+        )
+    return g.s3_client
 
 def upload_file(file_path, object_name):
     """Upload a file to the S3 bucket."""

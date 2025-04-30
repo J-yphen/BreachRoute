@@ -1,5 +1,4 @@
 import os
-import boto3
 from flask import Flask
 from flask_migrate import Migrate
 from flask_login import LoginManager
@@ -17,19 +16,6 @@ def create_app(config_class='config.ProductionConfig'):
 
     db.init_app(app)
     migrate.init_app(app, db)
-
-    s3_client = None
-    if app.config['S3_ACCESS_KEY'] and app.config['S3_SECRET_KEY']:
-        s3_client = boto3.client(
-            's3',
-            endpoint_url=app.config['S3_ENDPOINT_URL'],
-            aws_access_key_id=app.config['S3_ACCESS_KEY'],
-            aws_secret_access_key=app.config['S3_SECRET_KEY'],
-            region_name=app.config['S3_REGION']
-        )
-        app.s3_client = s3_client
-    else:
-        app.s3_client = None
         
     from . import models
 
@@ -53,6 +39,12 @@ def create_app(config_class='config.ProductionConfig'):
     if not app.config['SETUP_COMPLETE']:
         app.register_blueprint(onboarding_bp)
         # app.add_url_rule('/', endpoint='onboarding.setup') ### Adding this will redirect to `/setup` by default
+    else:
+        app.config['S3_ACCESS_KEY'] = config.s3_access_key
+        app.config['S3_SECRET_KEY'] = config.s3_secret_key
+        app.config['S3_BUCKET_NAME'] = config.s3_bucket_name
+        app.config['S3_REGION'] = config.s3_region_name
+        app.config['S3_ENDPOINT_URL'] = config.s3_url
 
     from flask import render_template
     @app.errorhandler(404)

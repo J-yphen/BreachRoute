@@ -5,6 +5,11 @@ from flask_login import UserMixin
 class AppConfig(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     setup_complete = db.Column(db.Boolean, default=False)
+    s3_access_key = db.Column(db.Text, unique=True, nullable=True)
+    s3_secret_key = db.Column(db.Text, unique=True, nullable=True)
+    s3_bucket_name = db.Column(db.Text, nullable=True)
+    s3_region_name = db.Column(db.Text, nullable=True)
+    s3_url = db.Column(db.Text, nullable=True)
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)

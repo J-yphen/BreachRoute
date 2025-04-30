@@ -108,7 +108,9 @@ def update_route_visibility(url_path):
 @bp.route('/delete_route/<path:url_path>', methods=['GET'])
 @login_required
 def delete_route(url_path):
-    return jsonify({"message": remove_route(url_path), "redirect": url_for('main.admin')})
+    res, catgry = remove_route(url_path)
+    flash(res, catgry)
+    return jsonify({"message": res, "redirect": url_for('main.admin')})
 
 @bp.route('/<path:dynamic_path>')
 def dynamic_handler(dynamic_path):

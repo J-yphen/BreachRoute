@@ -128,7 +128,6 @@ function setupDeleteConfirmation() {
         fetch('delete_route/' + url_path)
             .then(response => response.json())
             .then(data => {
-                alert(data.message);
                 window.location.href = data.redirect;
             })
             .catch(error => {

@@ -130,7 +130,7 @@ def remove_route(url_path):
         return "Route deleted successfully", "success"
     except Exception as e:
         db.session.rollback()
-        return str(e)
+        return str(e), "error"
 
 def search_route(search_field):
     if search_field != "":

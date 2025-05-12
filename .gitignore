@@ -20,4 +20,3 @@ uploads/
 backend_bp/
 proxy_bp/
 app/utils/s3_service.py
-run.py

@@ -1,6 +1,6 @@
 from ..models import AppConfig, User
 from werkzeug.utils import secure_filename
-from app.utils.route_utils import fetch_all_route, fetch_route_payload, modify_route, modify_route_visibility, register_route, remove_route, render_route, search_route
+from app.utils.route_utils import check_files_on_cloud, fetch_all_route, fetch_route_payload, modify_route, modify_route_visibility, register_route, remove_route, render_route, search_route
 from werkzeug.security import check_password_hash
 from flask_login import current_user, login_required, login_user, logout_user
 from flask import Blueprint, flash, jsonify, redirect, render_template, request, url_for
@@ -129,3 +129,8 @@ def fetch_payload(url_path):
 def find_route():
     search_field = request.args.get('query', '')
     return render_template('breach/admin.html', username=current_user.username, route_list=search_route(search_field=search_field))
+
+@bp.route('/list_cloud_files', methods=['GET'])
+@login_required
+def list_cloud_files():
+    return check_files_on_cloud()

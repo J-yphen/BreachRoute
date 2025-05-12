@@ -139,7 +139,7 @@ def modify_route(old_url_path_id, new_url_path, new_filename, payload, isFile):
     old_file_path = os.path.join(uploads_dir, old_route.filename)
 
     if old_url_path_id != new_url_path:
-        if Route.query.filter_by(url_path=new_url_path).first() == None or not bool(re.fullmatch(r'[A-Za-z0-9_-]+', new_url_path)):
+        if Route.query.filter_by(url_path=new_url_path).first() == None or not bool(re.fullmatch(r'[A-Za-z0-9._/-]+', new_url_path)):
             old_route.url_path = new_url_path
             if old_route.filename != new_filename:
                 if Route.query.filter_by(filename=new_filename).first() == None and is_valid(new_filename):
@@ -204,6 +204,23 @@ def search_route(search_field):
         return Route.query.filter(Route.url_path.ilike(f"%{search_field}%")).all()
     else:
         return fetch_all_route()
+
+def check_files_on_cloud():
+    svc = get_storage_service()
+    if svc:
+        object_list = []
+        for obj in svc.get_file_list():
+            object_info = {
+                "name": obj.name,
+                "size": obj.size,
+                "hash": obj.hash,
+                "extra": obj.extra,
+            }
+            object_list.append(object_info)
+        return object_list
+    else:
+        return None
+
 # uploads_dir = current_app.config['UPLOAD_FOLDER']
 #     for route in routes:
 #         file_path = os.path.join(uploads_dir, route.filename)

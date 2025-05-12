@@ -34,9 +34,13 @@ class StorageService:
     def delete_file(self, file_name):
         obj = self.container.get_object(file_name)
         self.driver.delete_object(obj)
-        print(f"File successfully deleted")
+        print(f"Filename: {file_name} successfully deleted")
 
     def get_file(self, file_name):
         obj = self.container.get_object(file_name)
         stream = self.driver.download_object_as_stream(obj)
         return b"".join(stream) 
+    
+    def get_file_list(self):
+        obj = self.container.list_objects()
+        return obj 

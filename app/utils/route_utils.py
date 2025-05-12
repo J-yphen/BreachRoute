@@ -10,11 +10,11 @@ is_valid = lambda filename: re.match(r'^(?!^(CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])(
 storage_setup_warning_logged = False
 
 def get_storage_service():
-    global storage_warning_logged
+    global storage_setup_warning_logged
     svc = getattr(current_app, 'storage_service', None)
-    if svc is None and not storage_warning_logged:
+    if svc is None and not storage_setup_warning_logged:
         print("WARNING: Storage service not configured. Complete setup first.")
-        storage_warning_logged = True
+        storage_setup_warning_logged = True
     return svc
 ###########################################################
 

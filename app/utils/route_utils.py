@@ -4,15 +4,25 @@ from app.models import Route, db
 from jinja2 import Environment, FileSystemLoader
 from flask import abort, current_app, send_from_directory
 
-from app.utils.s3_service import delete_file, get_file, upload_file
-
 template_extensions = ['.html', '.jinja', '.j2', '.xml', '.txt', '.css', '.js']
 is_valid = lambda filename: re.match(r'^(?!^(CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])(\..*)?$)(?!.*[\\/:*?"<>|])[^\\/:*?"<>|\r\n]{1,255}(?<![ .])$', filename, re.IGNORECASE) is not None
 
+storage_setup_warning_logged = False
+
+def get_storage_service():
+    global storage_warning_logged
+    svc = getattr(current_app, 'storage_service', None)
+    if svc is None and not storage_warning_logged:
+        print("WARNING: Storage service not configured. Complete setup first.")
+        storage_warning_logged = True
+    return svc
 ###########################################################
 
 def delete_old_file(filename, file_path):
-    delete_file(filename)
+    svc = get_storage_service()
+    if svc:
+        svc.delete_file(filename)
+        # delete_file(filename)
     try:
         os.remove(file_path)
     except Exception as e:
@@ -21,13 +31,16 @@ def delete_old_file(filename, file_path):
 def fetch_and_store_file_from_s3(uploads_dir, filename):
     file_path = os.path.join(uploads_dir, filename)
     if not os.path.exists(file_path):
-        payload = get_file(filename)
-        if payload:
-            with open(file_path, 'w+') as file:
-                file.write(payload)
-            return payload
-        else:
-            current_app.logger.critical(f"Error: {file_path} exists but no payload")
+        svc = get_storage_service()
+        if svc:
+            payload = svc.get_file(filename)
+            # payload = get_file(filename)
+            if payload:
+                with open(file_path, 'wb') as file:
+                    file.write(payload)
+                return payload
+            else:
+                current_app.logger.critical(f"Error: {file_path} exists but no payload")
     return None
 
 ###########################################################
@@ -55,8 +68,8 @@ def register_route(url_path, filename, payload, isFile):
     if isFile:
         payload.save(file_path)
     else:
-        with open(file_path, 'w+') as file:
-            file.write(payload)
+        with open(file_path, 'wb') as file:
+            file.write(payload.encode())
     
     _, ext = os.path.splitext(filename)
     if ext in template_extensions:
@@ -66,7 +79,12 @@ def register_route(url_path, filename, payload, isFile):
     
     try:
         new_route = Route(url_path=url_path, path_visible=True, filename=filename, response_type=response_type)
-        upload_file(file_path=file_path, object_name=filename)
+        svc = get_storage_service()
+        if svc:
+            with open(file_path, 'rb') as f:
+                file_data = f.read()
+                svc.upload_file(file_name=filename, file_data=file_data)
+            # upload_file(file_path=file_path, object_name=filename)
         db.session.add(new_route)
         db.session.commit()
     except Exception as e:
@@ -100,13 +118,13 @@ def fetch_route_payload(url_path):
     uploads_dir = current_app.config['UPLOAD_FOLDER']
 
     payload = fetch_and_store_file_from_s3(uploads_dir, route.filename)
-    if  payload != None:
-        return payload
+    if payload != None:
+        return payload.decode(), "success"
 
     file_path = os.path.join(uploads_dir, route.filename)
     try:
-        with open(file_path, 'r') as file:
-            return file.read(), "success"
+        with open(file_path, 'rb') as file:
+            return file.read().decode(), "success"
     except Exception as e:
         current_app.logger.critical(str(e))
         return "PAYLOAD CAN NOT BE RENDERED", "error"
@@ -142,12 +160,16 @@ def modify_route(old_url_path_id, new_url_path, new_filename, payload, isFile):
     if isFile:
         payload.save(file_path)
     else:
-        with open(file_path, 'w+') as file:
-            file.write(payload)
+        with open(file_path, 'wb') as file:
+            file.write(payload.encode())
     try:
-
         db.session.commit()
-        upload_file(file_path=file_path, object_name=new_filename)
+        svc = get_storage_service()
+        if svc:
+            with open(file_path, 'rb') as f:
+                file_data = f.read()
+                svc.upload_file(file_name=new_filename, file_data=file_data)
+            # upload_file(file_path=file_path, object_name=new_filename)
         return "Route updated successfully", "success"
     except Exception as e:
         db.session.rollback()

@@ -4,6 +4,8 @@ from flask_migrate import Migrate
 from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 
+from app.service.services import StorageService
+
 db = SQLAlchemy()
 migrate = Migrate()
 
@@ -31,6 +33,16 @@ def create_app(config_class='config.ProductionConfig'):
         
         app.config['SETUP_COMPLETE'] = config.setup_complete
         os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+
+        if config.setup_complete:
+            app.config['PROVIDER_TYPE'] = config.provider_type
+            app.config['S3_ACCESS_KEY'] = config.s3_access_key
+            app.config['S3_SECRET_KEY'] = config.s3_secret_key
+            app.config['S3_BUCKET_NAME'] = config.s3_bucket_name
+            app.config['S3_REGION'] = config.s3_region_name
+            app.config['S3_ENDPOINT_URL'] = config.s3_url
+
+            app.storage_service = StorageService(app.config['PROVIDER_TYPE'])
     
     from .breach_route import bp as main_bp
     from .onboarding import bp as onboarding_bp
@@ -39,12 +51,6 @@ def create_app(config_class='config.ProductionConfig'):
     if not app.config['SETUP_COMPLETE']:
         app.register_blueprint(onboarding_bp)
         # app.add_url_rule('/', endpoint='onboarding.setup') ### Adding this will redirect to `/setup` by default
-    else:
-        app.config['S3_ACCESS_KEY'] = config.s3_access_key
-        app.config['S3_SECRET_KEY'] = config.s3_secret_key
-        app.config['S3_BUCKET_NAME'] = config.s3_bucket_name
-        app.config['S3_REGION'] = config.s3_region_name
-        app.config['S3_ENDPOINT_URL'] = config.s3_url
 
     from flask import render_template
     @app.errorhandler(404)

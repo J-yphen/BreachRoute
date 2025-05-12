@@ -334,6 +334,7 @@ function setupAutoDismissAlerts() {
 function setupS3BucketToggle() {
     const toggleCheckbox = document.getElementById('toggle-s3-details-div');
     const s3Details = document.getElementById('s3-details');
+    const providerSelect = document.getElementById('provider-type');
 
     if (!toggleCheckbox || !s3Details) return;
 
@@ -344,11 +345,73 @@ function setupS3BucketToggle() {
         s3Details.classList.toggle('hidden', !toggleCheckbox.checked);
         
         // Toggle required attributes for S3 fields
-        const s3Fields = s3Details.querySelectorAll('input');
-        s3Fields.forEach(field => {
-            field.required = toggleCheckbox.checked;
-        });
+        // const s3Fields = s3Details.querySelectorAll('input');
+        // s3Fields.forEach(field => {
+        //     field.required = toggleCheckbox.checked;
+        // });
     });
+
+    providerSelect.addEventListener('change', function() {
+        let providerName = getSelectedProviderName();
+        let access_key_div = document.getElementById("access-key-div");
+        let secret_key_div = document.getElementById("secret-key-div");
+        let bucket_name_div = document.getElementById("bucket-name-div");
+        let region_name_div = document.getElementById("region-name-div");
+        let endpoint_url_div = document.getElementById("endpoint-url-div");
+        switch (providerName) {
+            case "aws":
+                access_key_div.classList.remove('hidden');
+                secret_key_div.classList.remove('hidden');
+                bucket_name_div.classList.remove('hidden');
+                region_name_div.classList.remove('hidden');
+                endpoint_url_div.classList.remove('hidden');
+                break;
+            case "gcp":
+                access_key_div.classList.remove('hidden');
+                secret_key_div.classList.remove('hidden');
+                bucket_name_div.classList.remove('hidden');
+                region_name_div.classList.add('hidden');
+                endpoint_url_div.classList.add('hidden');
+                break;
+            case "azure":
+                access_key_div.classList.remove('hidden');
+                secret_key_div.classList.remove('hidden');
+                bucket_name_div.classList.remove('hidden');
+                region_name_div.classList.add('hidden');
+                endpoint_url_div.classList.add('hidden');
+                break;
+            case "digitalocean":
+                access_key_div.classList.remove('hidden');
+                secret_key_div.classList.remove('hidden');
+                bucket_name_div.classList.remove('hidden');
+                region_name_div.classList.remove('hidden');
+                endpoint_url_div.classList.add('hidden');
+                break;
+            case "backblaze":
+                access_key_div.classList.remove('hidden');
+                secret_key_div.classList.remove('hidden');
+                bucket_name_div.classList.remove('hidden');
+                region_name_div.classList.add('hidden');
+                endpoint_url_div.classList.add('hidden');
+                break;        
+            default:
+                access_key_div.classList.add('hidden');
+                secret_key_div.classList.add('hidden');
+                bucket_name_div.classList.add('hidden');
+                region_name_div.classList.add('hidden');
+                endpoint_url_div.classList.add('hidden');
+                break;
+        }
+    });
+
+    function getSelectedProviderName() {
+        let selectedOption = providerSelect.options[providerSelect.selectedIndex];
+        if (providerSelect.value !== "" && providerSelect.selectedIndex !== 0) {
+            return selectedOption.value;
+        } else {
+            return null;
+        }
+    }
 }
 
 // --- Delete Current Edit Route Handler ---
@@ -356,22 +419,24 @@ function setupS3BucketToggle() {
 function deleteCurrentlyEditingRouteHandler() {
     let delete_btn = document.getElementById('delete-currently-editing-route');
     let urlPathInput = document.getElementById('edit_url_path');
-    delete_btn.addEventListener("click", function() {
-        showLoadingScreen();
-        if(urlPathInput){
-            fetch('delete_route/' + urlPathInput.value)
-            .then(response => response.json())
-            .then(data => {
-                hideLoadingScreen();
-                setTimeout(() => {
-                    window.location.href = data.redirect;
-                }, 50);
-            })
-            .catch(error => {
-                console.log(error);
-            });
-        } 
-    });
+    if (delete_btn){    
+        delete_btn.addEventListener("click", function() {
+            showLoadingScreen();
+            if(urlPathInput){
+                fetch('delete_route/' + urlPathInput.value)
+                .then(response => response.json())
+                .then(data => {
+                    hideLoadingScreen();
+                    setTimeout(() => {
+                        window.location.href = data.redirect;
+                    }, 50);
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+            } 
+        });
+    }
 }
 
 // --- Row Action Handlers ---

@@ -111,10 +111,6 @@ def delete_route(url_path):
     flash(res, catgry)
     return jsonify({"message": res, "redirect": url_for('main.admin')})
 
-@bp.route('/<path:dynamic_path>')
-def dynamic_handler(dynamic_path):
-    return render_route(dynamic_path)
-
 @bp.route('/fetch_payload/<path:url_path>', methods=['GET'])
 @login_required
 def fetch_payload(url_path):
@@ -134,3 +130,7 @@ def find_route():
 @login_required
 def list_cloud_files():
     return check_files_on_cloud()
+
+@bp.route('/<path:dynamic_path>', methods=['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS', 'HEAD'])
+def dynamic_handler(dynamic_path):
+    return render_route(dynamic_path)

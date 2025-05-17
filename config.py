@@ -6,6 +6,9 @@ BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
 class Config:
     SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', 'sqlite:///app.db')
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        'pool_pre_ping': True
+    }
     SECRET_KEY = os.getenv('FLASK_SECRET_KEY', 'dev-fallback-key')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     UPLOAD_FOLDER = os.path.join(BASE_DIR, 'app', 'uploads')
